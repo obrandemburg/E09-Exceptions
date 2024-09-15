@@ -8,25 +8,61 @@ public class Main {
 
         Cliente joao = new PessoaFisica("João", "Av. Antonio Carlos, 6627",
                                         new Date(), "111.111.111-11", 36, 'm');
-        Cliente lojinha = new PessoaJuridica("Loja R$1,99", "Av. Afonso Pena, 3000",
-                                        new Date(), "000.00000.0000/0001", 25, "Comércio");
+
+        Cliente matheus = new PessoaFisica("Matheus", "Av. Antonio Carlos, 6627",
+                new Date(), "111.111.111-11", 17, 'm');
+
+        Cliente alex = new PessoaFisica("Alex", "Av. Antonio Carlos, 6627",
+                new Date(), "111.111.111-11", 36, 'm');
 
 
-        Conta cc = new ContaCorrente(1234, joao, 0, 1500);
-        Conta cp = new ContaPoupanca(12121, lojinha, 10000, 1500);
+        Conta contaJoao = new ContaCorrente(1234, joao, 100, 50);
 
-        boolean correto = false;
-        while(!correto) {
-            System.out.println("Digite um valor para deposito");
-            double valor = entrada.nextDouble();
+        Conta contaMatheus = new ContaCorrente(5678, matheus, 1000, 1500);
 
-            try {
-                cc.depositar(valor);
-                correto = true;
-            } catch (ArithmeticException exception) {
-                System.out.println("Erro na realização do depósito");
-                System.out.println(exception.getMessage());
-            }
+
+        //Questão 1:
+
+        //Aqui o saque excede o saldo da conta
+        try {
+            contaJoao.sacar(110);
+
+        }catch(ValorInvalidoException e){
+            System.out.println("Erro ao sacar: "+ e.getMessage());
+        }catch(ValorNegativoException e){
+            System.out.println("Erro ao sacar: "+ e.getMessage());
+        }catch(SemLimiteException e){
+            System.out.println("Erro ao sacar: "+ e.getMessage());
+        }
+
+        //Aqui o saque é negativo
+        try {
+            contaJoao.sacar(-100);
+        }catch(ValorInvalidoException e){
+            System.out.println("Erro ao sacar: "+ e.getMessage());
+        }catch(ValorNegativoException e){
+            System.out.println("Erro ao sacar: "+ e.getMessage());
+        }catch(SemLimiteException e){
+            System.out.println("Erro ao sacar: "+ e.getMessage());
+        }
+
+        //Aqui o saque excede o limite da conta
+        try {
+            contaJoao.sacar(60);
+        }catch(ValorInvalidoException e){
+            System.out.println("Erro ao sacar: "+ e.getMessage());
+        }catch(ValorNegativoException e){
+            System.out.println("Erro ao sacar: "+ e.getMessage());
+        }catch(SemLimiteException e){
+            System.out.println("Erro ao sacar: "+ e.getMessage());
+        }
+
+        //Questão 2:
+
+        try {
+            Conta contaAlex = new ContaCorrente(9101112, alex, 500, -1000);
+        }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
         }
 
     }

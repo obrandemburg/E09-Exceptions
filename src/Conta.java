@@ -20,38 +20,51 @@ public abstract class Conta implements ITaxas {
         this.numero = numero;
         this.dono = dono;
         this.saldo = saldo;
-        this.limite = limite;
+        setLimite(limite);
 
         this.operacoes = new ArrayList<>();
 
         Conta.totalContas++;
     }
 
-    public boolean sacar(double valor) {
-        if (valor >= 0 && valor <= this.limite) {
+    public void sacar(double valor) throws ValorNegativoException, SemLimiteException, ValorInvalidoException{
+        if (valor < 0) {
+
+            throw new ValorNegativoException();
+        } else if (valor > this.limite) {
+
+            throw new SemLimiteException();
+        } else if (valor > this.saldo) {
+
+            throw new ValorInvalidoException();
+        } else{
+
             this.saldo -= valor;
             this.operacoes.add(new OperacaoSaque(valor));
-            return true;
         }
-
-        return false;
     }
 
-    public void depositar(double valor) throws ArithmeticException {
+    public void depositar(double valor) throws ValorNegativoException {
         if (valor < 0)
-            throw new ArithmeticException("Erro. Valor negativo depositado.");
+            throw new ValorNegativoException();
 
         this.saldo += valor;
         this.operacoes.add(new OperacaoDeposito(valor));
     }
 
-    public boolean transferir(Conta destino, double valor) {
-        boolean valorSacado = this.sacar(valor);
-        if (valorSacado) {
-            destino.depositar(valor);
-            return true;
+    public void transferir(Conta destino, double valor) {
+
+        try{
+            this.sacar(valor);
+            destino.saldo += valor;
+
+        }catch(ValorNegativoException e){
+            System.out.println("Erro no saque\n" + e.getMessage());
+        }catch(SemLimiteException e){
+            System.out.println("Erro no saque\n" + e.getMessage());
+        }catch(ValorInvalidoException e){
+            System.out.println("Erro no saque\n" + e.getMessage());
         }
-        return false;
     }
 
     @Override
@@ -131,5 +144,5 @@ public abstract class Conta implements ITaxas {
         this.dono = dono;
     }
 
-    public abstract void setLimite(double limite);
+    public abstract void setLimite(double limite) throws IllegalArgumentException;
 }
